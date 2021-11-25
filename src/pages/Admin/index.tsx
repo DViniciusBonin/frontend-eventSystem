@@ -1,11 +1,11 @@
-import { FormEvent,  useContext,  useState } from 'react';
 import { Login } from '../../components/Login';
 import {useAuth} from '../../contexts/auth';
-import * as Style from './styles';
+import { Dashboard } from '../Dashboard';
+
 
 export function Admin() {
     
     const { signed } = useAuth(); 
 
-    return signed ? <div>Logado</div> : <Login />
+    return signed ? <Dashboard /> : <Login />
 }
