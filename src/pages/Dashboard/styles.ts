@@ -30,11 +30,46 @@ export const AreaEvents = styled.div`
     grid-template-columns: 1fr 3fr;
     margin: 0 auto;
     place-items: center;
+
+    form {
+        min-height: 100vh;
+        padding-top: 1rem;
+
+        display: flex;
+        flex-direction: column;
+
+        label, input {
+            width: 100%;
+        }
+
+        .workshop {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0.5rem;
+        }
+
+        button {
+            margin-top: 1rem;
+            outline: 0;
+            border:0;
+            background: #54ff85;
+            font-weight: bold;
+            color: #000;
+            padding: 5px;
+            border-radius: 5px;
+
+            &:hover {
+                background: #6edb8d;
+            }
+        }
+    }
 `;
 
 export const ListEvents = styled.div`
+    padding-top: 0.5rem;
     width: 100%;
-    border: 1px solid green;
+    border-right: 1px solid black;
+    min-height: 90vh; 
     display: flex;
     justify-content: center;
     ul {
@@ -42,14 +77,49 @@ export const ListEvents = styled.div`
     }
 
     ul li {
-        &:hover {
+        
+        .update {
+            outline: 0;
+            background: yellow;
+            border: 0;
+            color: #000;
+            padding: 5px;
+        }
+
+        .delete {
+            outline: 0;
+            background: red;
+            border: 0;
+            color: #fff;
+            padding: 5px;
+        }
+
+        div {
+            display:flex;
+            
+        }
+
+        div span {
+            width: 100%;
+            margin-right: 5px;
+            &:hover {
             background-color: #ccc;
             cursor: pointer;
+            }
+        }
+
+        div button {
+            margin: 0.1rem;
         }
     }
 `;
 
 export const AreaEvento = styled.div`
+    padding: 10px;
     width: 100%;
-    border: 1px solid red;
-    `;
+    min-height: 90vh;
+ 
+    h3,p {
+        text-align: center;
+    }
+`;
