@@ -122,4 +122,11 @@ export const AreaEvento = styled.div`
     h3,p {
         text-align: center;
     }
+
+    .infoWorkshop {
+        display: flex;
+        span {
+            margin-right: 1rem;
+        }
+    }
 `;

@@ -10,6 +10,7 @@ import { getDayNumber, getMonth, getYear } from '../../helpers/date';
 export function Dashboard() {
 
     type Event = {
+        id: string;
         name: string;
         initialDate: Date;
         endDate: Date,
@@ -29,6 +30,7 @@ export function Dashboard() {
 
     useEffect(() => {
         setEventSelected(null);
+        console.log(eventToUpdate?.initialDate)
     }, [eventToUpdate])
 
     async function logout() {
@@ -36,7 +38,7 @@ export function Dashboard() {
     }
 
     async function selectEvent(event: any) {
-        console.log(event);
+        //console.log(event);
         setEventSelected(event);
     }
 
@@ -48,6 +50,14 @@ export function Dashboard() {
     async function updateEvent(e: FormEvent) {
         e.preventDefault();
         console.log(eventToUpdate);
+        const { id } = eventToUpdate as Event;
+        api.patch(`events/${id}`, {
+           ...eventToUpdate
+        }).then((res) => {
+            alert('Evento alterado com sucesso!');
+        }).catch(() => {
+            alert('Não foi possivel alterar o evento. Contate o desenvolvedor.');
+        }).finally(() => setEventToUpdate(null));
     }
 
     async function deleteEvent(id: string) {
@@ -56,8 +66,26 @@ export function Dashboard() {
     }
 
     function updateWorkshop(index: number, value: any, key: string) {
-        
-        
+        console.log('entrou')
+        console.log(index, value, key)
+        let aux = eventToUpdate ? [...eventToUpdate.workshops] : [];
+       
+        if (key === 'name' && aux.length > 0) {
+            aux[index].name = value;
+        }
+
+        if (key === 'vacancies' && aux.length > 0) {
+            aux[index].vacancies = value;
+        }
+
+        setEventToUpdate({
+            id: eventToUpdate?.id as string,
+            name: eventToUpdate?.name as string,
+            endDate: eventToUpdate?.endDate as Date,
+            initialDate: eventToUpdate?.initialDate as Date,
+            workshops: [...aux] as any[]
+        });
+
     }
 
     return (
@@ -74,7 +102,7 @@ export function Dashboard() {
                     <Style.ListEvents>
 
                         <ul>
-                            <strong>Eventos cadastrados</strong>
+                            <strong>Eventos cadastrados</strong> <button>+</button>
                             { //onClick={() => selectEvent(event)}
                                 listEvents.map((event: any) => (
                                     <li>
@@ -86,9 +114,9 @@ export function Dashboard() {
                                                     onClick={() => selectEventToUpdate(event)}
                                                 ><GrEdit /></button>
                                                 <button
-                                                     className="delete"
-                                                     onClick={() => deleteEvent(event.id)}
-                                                     ><ImBin /></button>
+                                                    className="delete"
+                                                    onClick={() => deleteEvent(event.id)}
+                                                ><ImBin /></button>
                                             </div>
                                         </div>
                                     </li>
@@ -107,8 +135,9 @@ export function Dashboard() {
 
                             <div>
                                 workshops: {eventSelected.workshops.map((workshop: any) => (
-                                    <section>
-                                        {workshop.name}
+                                    <section className="infoWorkshop">
+                                        <span>{workshop.name}</span>
+                                        <span>Vagas disponiveis: {workshop.vacancies}</span>
                                     </section>
                                 ))}
                             </div>
@@ -122,69 +151,77 @@ export function Dashboard() {
                         </Style.AreaEvento>
                     }
 
-                    
-                {
-                    (eventToUpdate && !eventSelected) &&
 
-                    <form onSubmit={updateEvent}>
-                        <h3>Alterar evento</h3>
-                        <label htmlFor="">
-                            Nome
-                            <input 
-                                type="text" 
-                                value={eventToUpdate.name} 
-                                onChange={
-                                    function(e){
-                                        setEventToUpdate({
-                                            ...eventToUpdate,
-                                            name: e.target.value
-                                        })
-                                    }} />
-                        </label>
-                       
-                        <label htmlFor="">
-                            Data de início
-                            <input type="date" name="" id="" value={`${getYear(eventToUpdate.initialDate)}-${getMonth(eventToUpdate.initialDate)}-${getDayNumber(eventToUpdate.initialDate)}`} onChange={function(e) {
-                                setEventToUpdate({
-                                    ...eventToUpdate,
-                                    initialDate: new Date(e.target.value)
-                                })
-                            } }/>
-                        </label>
+                    {
+                        (eventToUpdate && !eventSelected) &&
 
-                        <label htmlFor="">
-                            Data de encerramento
-                            <input type="date" name="" id="" value={`${getYear(eventToUpdate.endDate)}-${getMonth(eventToUpdate.endDate)}-${getDayNumber(eventToUpdate.endDate)}`}  onChange={function(e) {
-                                setEventToUpdate({
-                                    ...eventToUpdate,
-                                    endDate: new Date(e.target.value)
-                                })
-                            } }/>
-                        </label>
+                        <form onSubmit={updateEvent}>
+                            <h3>Alterar evento</h3>
+                            <label htmlFor="">
+                                Nome
+                                <input
+                                    type="text"
+                                    value={eventToUpdate.name}
+                                    onChange={
+                                        function (e) {
+                                            setEventToUpdate({
+                                                ...eventToUpdate,
+                                                name: e.target.value
+                                            })
+                                        }} />
+                            </label>
 
-                        <label htmlFor="">
-                            Workshops:
-                            {
-                                eventToUpdate.workshops.map((workshop: any, index: number) => (
-                                    <label className="workshop" key={index}>
-                                       
-                                        workshop  {index + 1}: <input type="text" value={workshop.name} 
-                                        onChange={
-                                            function(e) {
-                                               updateWorkshop(index, e.target.value, 'name')
-                                            }
-                                        }
-                                        />
-                                        vagas: <input type="number" value={workshop.vacancies} />    
-                                    </label>
-                                   
-                                ))
-                            }
-                        </label>
-                      
-                        <button>Salvar</button>
-                    </form>
-                }
+                            <label htmlFor="">
+                                Data de início
+                                <input type="date" name="" id="" value={`${getYear(eventToUpdate.initialDate)}-${getMonth(eventToUpdate.initialDate)}-${getDayNumber(eventToUpdate.initialDate)}`} onChange={function (e) {
+                                   const date = new Date(e.target.value);
+                                   if(date.getDate() < 31) { date.setDate(date.getDate() + 1); }
+                                    setEventToUpdate({
+                                        ...eventToUpdate,
+                                        initialDate: new Date(date)
+                                    })
+                                }} />
+                            </label>
+
+                            <label htmlFor="">
+                                Data de encerramento
+                                <input type="date" name="" id="" value={`${getYear(eventToUpdate.endDate)}-${getMonth(eventToUpdate.endDate)}-${getDayNumber(eventToUpdate.endDate)}`} onChange={function (e) {
+                                    setEventToUpdate({
+                                        ...eventToUpdate,
+                                        endDate: new Date(e.target.value)
+                                    })
+                                }} />
+                            </label>
+
+                            <label htmlFor="">
+                                Workshops:
+                                {
+                                    eventToUpdate.workshops.map((workshop: any, index: number) => (
+                                        <label className="workshop" key={index}>
+
+                                            workshop  {index + 1}: <input type="text" value={workshop.name}
+                                                onChange={
+                                                    function (e) {
+                                                        updateWorkshop(index, e.target.value, 'name')
+                                                    }
+                                                }
+                                            />
+                                            vagas: <input type="number" value={workshop.vacancies} 
+                                                onChange={
+                                                    function(e) {
+                                                        updateWorkshop(index, e.target.value, 'vacancies')
+                                                    }
+                                                }
+                                            />
+                                        </label>
+
+                                    ))
+                                }
+                            </label>
+
+                            <button>Salvar</button>
+                        </form>
+                    }
 
                 </Style.AreaEvents>
 
