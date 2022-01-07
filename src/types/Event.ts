@@ -9,7 +9,7 @@ export type Event = {
 }
 
 export type Workshop = {
-    id: string;
+    id?: string;
     name: string;
     vacancies: number;
 }

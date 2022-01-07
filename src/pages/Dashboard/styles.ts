@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { Event } from './../../types/Event';
 import { Button } from './../../components/EventSection/styles';
 import styled from "styled-components";
 
@@ -65,6 +67,16 @@ export const AreaEvents = styled.div`
     }
 `;
 
+export const StyledLink = styled(Link)`
+    display: inline-block;
+    border: 0;
+    outline: 0;
+    padding: 5px;
+    margin-bottom: 1rem;
+    background: #5eff74;
+    border-radius: 30%;
+`;
+
 export const ListEvents = styled.div`
     padding-top: 0.5rem;
     width: 100%;
@@ -72,6 +84,7 @@ export const ListEvents = styled.div`
     min-height: 90vh; 
     display: flex;
     justify-content: center;
+
     ul {
         list-style: none;
     }

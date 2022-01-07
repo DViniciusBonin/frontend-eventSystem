@@ -35,6 +35,7 @@ export const AuthProvider: React.FC = ({children}) => {
     async function logout() {
         setUser(null);
         sessionStorage.removeItem('@event:token');
+        window.location.href = '../';
     }
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import * as Style from './styles';
 import { FiLogOut } from "react-icons/fi";
 import { GrEdit } from 'react-icons/gr';
 import { ImBin } from 'react-icons/im';
+import { GrAdd } from 'react-icons/gr';
 import { useAuth } from '../../contexts/auth';
 import { FormEvent, useEffect, useState } from 'react';
 import { api } from '../../services/api';
@@ -102,7 +103,7 @@ export function Dashboard() {
                     <Style.ListEvents>
 
                         <ul>
-                            <strong>Eventos cadastrados</strong> <button>+</button>
+                            <strong className="list-event">Eventos cadastrados</strong>  <Style.StyledLink to="/admin/events/register" style={{textDecoration: 'none'}}><GrAdd /></Style.StyledLink>
                             { //onClick={() => selectEvent(event)}
                                 listEvents.map((event: any) => (
                                     <li>

@@ -23,7 +23,9 @@ export function Login() {
 
     return (
         <Style.Container>
+          
             <form onSubmit={handleLogin}>
+            <h1>Painel admin</h1>
                 <label>Login</label>
                 <input type="text" placeholder="Digite o seu login" onChange={(e) => setLogin(e.target.value)} required/>
                 <label>Senha</label>
