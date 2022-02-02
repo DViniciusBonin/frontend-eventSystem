@@ -1,6 +1,6 @@
 import * as Style from './styles';
 import { FiLogOut } from "react-icons/fi";
-import { GrEdit } from 'react-icons/gr';
+import { GrEdit, GrWorkshop } from 'react-icons/gr';
 import { ImBin } from 'react-icons/im';
 import { GrAdd } from 'react-icons/gr';
 import { useAuth } from '../../contexts/auth';
@@ -10,12 +10,18 @@ import { getDayNumber, getMonth, getYear } from '../../helpers/date';
 
 export function Dashboard() {
 
+    interface workshop {
+        name: string;
+        vacancies: number;
+        Workshop_Users: any[];
+    }
+
     type Event = {
         id: string;
         name: string;
         initialDate: Date;
         endDate: Date,
-        workshops: any[],
+        workshops: workshop[],
     }
 
     const context = useAuth();
@@ -27,11 +33,10 @@ export function Dashboard() {
 
     useEffect(() => {
         api.get('/events/all').then(res => setListEvents(res.data))
-    }, [listEvents]);
+    }, [eventSelected, eventToUpdate]);
 
     useEffect(() => {
         setEventSelected(null);
-        console.log(eventToUpdate?.initialDate)
     }, [eventToUpdate])
 
     async function logout() {
@@ -53,7 +58,7 @@ export function Dashboard() {
         console.log(eventToUpdate);
         const { id } = eventToUpdate as Event;
         api.patch(`events/${id}`, {
-           ...eventToUpdate
+            ...eventToUpdate
         }).then((res) => {
             alert('Evento alterado com sucesso!');
         }).catch(() => {
@@ -70,7 +75,7 @@ export function Dashboard() {
         console.log('entrou')
         console.log(index, value, key)
         let aux = eventToUpdate ? [...eventToUpdate.workshops] : [];
-       
+
         if (key === 'name' && aux.length > 0) {
             aux[index].name = value;
         }
@@ -103,7 +108,7 @@ export function Dashboard() {
                     <Style.ListEvents>
 
                         <ul>
-                            <strong className="list-event">Eventos cadastrados</strong>  <Style.StyledLink to="/admin/events/register" style={{textDecoration: 'none'}}><GrAdd /></Style.StyledLink>
+                            <strong className="list-event">Eventos cadastrados</strong>  <Style.StyledLink to="/admin/events/register" style={{ textDecoration: 'none' }}><GrAdd /></Style.StyledLink>
                             { //onClick={() => selectEvent(event)}
                                 listEvents.map((event: any) => (
                                     <li>
@@ -141,6 +146,26 @@ export function Dashboard() {
                                         <span>Vagas disponiveis: {workshop.vacancies}</span>
                                     </section>
                                 ))}
+
+
+                                {
+                                    eventSelected.workshops.map((workshop: any) => (
+                                        //<span>{JSON.stringify(workshop.Workshop_Users[0])}</span>
+                                        workshop.Workshop_Users.map((result: any) => (
+                                            <div>
+                                                <br />
+                                                <strong>Inscritos</strong>
+                                           
+                                                <tr className="">
+                                                    <td className='line'>{result.user.name}</td>
+                                                    
+                                                    <td className='line'> {result.user.login}</td>
+                                                    <td className='line'> {new Date(result.user.created_at).toDateString()}</td>
+                                                </tr>
+                                            </div>
+                                        ))
+                                    ))
+                                }
                             </div>
                         </Style.AreaEvento>
                     }
@@ -175,8 +200,8 @@ export function Dashboard() {
                             <label htmlFor="">
                                 Data de início
                                 <input type="date" name="" id="" value={`${getYear(eventToUpdate.initialDate)}-${getMonth(eventToUpdate.initialDate)}-${getDayNumber(eventToUpdate.initialDate)}`} onChange={function (e) {
-                                   const date = new Date(e.target.value);
-                                   if(date.getDate() < 31) { date.setDate(date.getDate() + 1); }
+                                    const date = new Date(e.target.value);
+                                    if (date.getDate() < 31) { date.setDate(date.getDate() + 1); }
                                     setEventToUpdate({
                                         ...eventToUpdate,
                                         initialDate: new Date(date)
@@ -207,9 +232,9 @@ export function Dashboard() {
                                                     }
                                                 }
                                             />
-                                            vagas: <input type="number" value={workshop.vacancies} 
+                                            vagas: <input type="number" value={workshop.vacancies}
                                                 onChange={
-                                                    function(e) {
+                                                    function (e) {
                                                         updateWorkshop(index, e.target.value, 'vacancies')
                                                     }
                                                 }
