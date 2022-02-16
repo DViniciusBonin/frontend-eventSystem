@@ -52,6 +52,7 @@ export function RegisterEvents() {
         });
 
         resetStates();
+        window.location.href = '/admin/events'
 
         }catch(error: any) {
             setLoading(false);
